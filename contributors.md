@@ -9,7 +9,7 @@ Tim Fomichev aka Kaltlight
 
 Students:
 Gavriil Kupriyanov
-Ivan Kandalov aka 
+Ivan Kandalov aka qwqanargh
 
 Supervisors: 
 Vitaly Bogomolov 
