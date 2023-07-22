@@ -12,8 +12,8 @@ Gavriil Kupriyanov,
 Ivan Kandalov aka qwqanargh
 
 Supervisors: 
-Vitaly Bogomolov,
 Yurii Dementiev,
+Vitaly Bogomolov,
 Ekaterina Sigaeva
 
 PI: Ivan Zolotarev aka lightweave
