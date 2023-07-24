@@ -9,7 +9,7 @@ Tim Fomichev aka Kaltlight
 
 Students:
 Gavriil Kupriyanov,
-Ivan Kandalov aka qwqanargh
+Ivan Kandalov aka qwqanargh,
 Postdoc George Antonjuk
 
 Supervisors: 
