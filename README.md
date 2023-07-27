@@ -1,5 +1,5 @@
 # madiz
-MADIZ project is aimed to develop a simple method and software to use conventional camera as a Radiation detector. MADIZ is intended but not limited to be installed on satellite Raspberry Pi computer with camera attached. Standard camera silicon matrix is sensitive to radiation abundant in space, hence can be used for radiation detection. This code also may be useful for development of software radiation detectors for smartphones.
+MADIZ project is aimed at developing a simple method and software to use cameras as radiation detectors. MADIZ is intended but not limited to being installed on a satellite Raspberry Pi computer with a camera attached. Standard camera silicon matrix is sensitive to radiation abundant in space, hence it can be used for radiation detection. This code also may be useful for the development of software radiation detectors for smartphones.
 
 The project name, acronym MADIZ stands for MAtrix Detector of radiation (IZlucheniya).
 #
