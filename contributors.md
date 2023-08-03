@@ -19,4 +19,4 @@ Ekaterina Sigaeva
 
 PI: Ivan Zolotarev aka lightweave
 
-Also we appreciate the support from the SINP MSU, Sirius Education Center, Sputnix LCC.
+Also we appreciate the support from the SINP MSU, Sirius Education Center, Sputnix LCC, Space-Pi.
