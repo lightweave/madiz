@@ -15,7 +15,8 @@ Postdoc George Antonjuk
 Supervisors: 
 Yurii Dementiev,
 Vitaly Bogomolov,
-Ekaterina Sigaeva
+Ekaterina Sigaeva,
+Vladislav Osedlo
 
 PI: Ivan Zolotarev aka lightweave
 
