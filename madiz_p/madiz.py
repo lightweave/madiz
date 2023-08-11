@@ -11,7 +11,6 @@ from PIL import Image, ImageEnhance
 import numpy as np
 import picamera
 
-
 def is_overexposed(img):
     """
     Check if the image is overexposed.
@@ -26,8 +25,7 @@ def is_overexposed(img):
     threshold = 100
     return mean_intensity > threshold
 
-
-def count_pixels(img, const, fixed=False):
+def count_pixels(img, const, fixed = False):
     """
     Count the number of exposed pixels.
     Parameters:
@@ -40,8 +38,7 @@ def count_pixels(img, const, fixed=False):
         np.array of groups of pixels
     """
 
-    pixel_brightness = np.asarray(img, dtype="uint8")
-
+    pixel_brightness = np.asarray(img, dtype='uint8')
     if fixed:
         average = 80
     else:
@@ -60,7 +57,7 @@ def count_pixels(img, const, fixed=False):
     enhancer = ImageEnhance.Brightness(img_resize)
     factor = 80
     img_resize_enhance = enhancer.enhance(factor)
-    group_brightness = np.asarray(img_resize_enhance, dtype="uint8")
+    group_brightness = np.asarray(img_resize_enhance, dtype='uint8')
 
     average = np.sum(group_brightness) / (img_resize_enhance.size[0] * img_resize_enhance.size[1]) + const
 
@@ -70,96 +67,49 @@ def count_pixels(img, const, fixed=False):
 
     return average, pixel_brightness, group_brightness
 
-
-def get_coords(index, img_width):
+def get_groups(num_ar, pos, visited = [], coord_list = [], group_list = []):
     """
-    Convert the index to coordinates.
+    Classify exposed pixels into groups using recursion.
     Parameters:
-        index - index of the pixel in a 1d-array
-        img_width - width of the image
+        num_ar - np.array of the coordinates of the exposed pixels
+        pos - coordinates of the entry point
+        visited - list of the visited pixels
+        coord_list - list of the exposed pixels in one group
+        group_list - list of the groups of the exposed pixels
     Return:
-        pair of the coordiantes of a 2d-array
+        group_list - list of the groups of the exposed pixels
     """
 
-    x_coord = index % img_width
-    y_coord = index // img_width
-    return (x_coord, y_coord)
+    if pos in visited:
+        return group_list
+    visited.append(pos)
 
+    if pos not in coord_list:
+        coord_list.append(pos)
 
-def get_index(img_coords, img_width):
-    """
-    Convert coordinates to the index.
-    Parameters:
-        img_coords - coordinates of the pixel in a 2d-array
-        img_width - width of the image
-    Return:
-        index of a 1d-array
-    """
+    num_ar = np.delete(num_ar, num_ar.tolist().index(pos), 0)
 
-    return img_width * img_coords[1] + img_coords[0]
+    neighbors = [[pos[0] + 1, pos[1]],
+                 [pos[0], pos[1] + 1],
+                 [pos[0] - 1, pos[1]],
+                 [pos[0], pos[1] - 1],
+                 [pos[0] - 1, pos[1] + 1],
+                 [pos[0] + 1, pos[1] - 1],
+                 [pos[0] + 1, pos[1] + 1],
+                 [pos[0] - 1, pos[1] - 1]]
 
+    for neighbor in neighbors:
+        if neighbor in num_ar.tolist():
+            coord_list.append(neighbor)
+            return get_groups(num_ar, neighbor, visited, coord_list, group_list)
 
-def get_neighbors(img_coords):
-    """
-    Get neighbors of the specified coordinates.
-    Parameters:
-        img_coords - coordinates of the pixel in a 2d-array
-    Return:
-        list of the coordinates of the neighboring pixels
-    """
+    if num_ar.tolist() == []:
+        return group_list
 
-    img_neighbors = [
-        (img_coords[0], img_coords[1] + 1),
-        (img_coords[0] + 1, img_coords[1] + 1),
-        (img_coords[0] + 1, img_coords[1]),
-        (img_coords[0] + 1, img_coords[1] - 1),
-        (img_coords[0], img_coords[1] - 1),
-        (img_coords[0] - 1, img_coords[1] - 1),
-        (img_coords[0] - 1, img_coords[1]),
-        (img_coords[0] - 1, img_coords[1] + 1),
-    ]
-    return img_neighbors
+    group_list.append(coord_list)
+    coord_list = []
 
-
-def get_groups(br_list, width, height):
-    """
-    Get groups of the exposed pixels.
-    Parameters:
-        br_list - binarized np.array with exposed pixels
-        width - width of the image
-        height - height of the image
-    Return:
-        groups of the exposed pixels
-    """
-
-    i = 0
-    cloud, neighbors, groups = [], [], []
-
-    while i != width * height - 1:
-        if br_list[i] == 1:
-            br_list[i] = 0
-            coords = get_coords(i, width)
-            cloud.append(coords)
-            for neighbor in get_neighbors(coords):
-                if br_list[get_index(neighbor, width)] == 1:
-                    br_list[get_index(neighbor, width)] = 0
-                    neighbors.append(neighbor)
-
-            while len(neighbors) != 0:
-                neighbor = neighbors[-1]
-                cloud.append(neighbor)
-                neighbors.remove(neighbor)
-                for n2 in get_neighbors(neighbor):
-                    if br_list[get_index(n2, width)] == 1:
-                        br_list[get_index(n2, width)] = 0
-                        neighbors.append(n2)
-
-            groups.append(cloud)
-            cloud = []
-        i += 1
-
-    return groups
-
+    return get_groups(num_ar, num_ar[0].tolist(), visited, coord_list, group_list)
 
 def count_groups(img, average):
     """
@@ -172,17 +122,19 @@ def count_groups(img, average):
     """
 
     width, height = img.size
-    br_list = np.asarray(img, dtype="uint8")
-    br_list = np.where(br_list > average, 1, 0)
-    br_list = br_list.flatten()
+    const_br = average
+    br_list = np.asarray(img, dtype='uint8').T
 
-    if len(br_list) == 0:
+    x = np.arange(0, width)
+    y = np.arange(0, height)
+    num_ar = np.array(np.meshgrid(x, y)).T
+    num_ar = num_ar[br_list > const_br]
+    if len(num_ar) == 0:
         group_list = []
     else:
-        group_list = get_groups(br_list, width, height)
+        group_list = get_groups(num_ar, num_ar[0].tolist())
 
     return len(group_list)
-
 
 save_image = bool(sys.argv[1])
 
