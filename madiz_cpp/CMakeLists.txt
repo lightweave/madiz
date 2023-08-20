@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project( MADIZ )
 
-#set(CMAKE_C_COMPILER /usr/bin/clang CACHE PATH "")
-#set(CMAKE_CXX_COMPILER /usr/bin/clang++ CACHE PATH "")
 
 FIND_PACKAGE( OpenMP)
       if(OPENMP_FOUND)
@@ -18,9 +16,9 @@ find_package( OpenCV REQUIRED )
     endif()
 
 
-add_compile_options(-O2 -Ofast -Wall -fopenmp)
+add_compile_options(-O2 -Ofast -fopenmp )
+add_compile_options(-Wl,--as-needed -lfoo -Wl,--as-needed)
 
 include_directories( ${OpenCV_INCLUDE_DIRS} )
-
-add_executable( MADIZ MADIZ.cpp obr.hpp util.hpp)
-target_link_libraries( MADIZ ${OpenCV_LIBS} )
+add_executable( MADIZ MADIZ.cpp serv.cpp util.cpp obr.cpp)
+target_link_libraries( MADIZ opencv_core opencv_imgproc opencv_imgcodecs)#${OpenCV_LIBS} 

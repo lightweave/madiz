@@ -1,4 +1,5 @@
 #include "obr.hpp"
+#include "serv.hpp"
 #include <omp.h>
 #include <iostream>
 #include <vector>
@@ -6,7 +7,9 @@
 #include <stdio.h>
 #include <string>
 #define str to_string
-using namespace cv;
+using cv::Mat;
+using cv::COLOR_RGB2GRAY;
+using cv::imread;
 using namespace std;
 
 
@@ -33,6 +36,9 @@ int main(int argc, char** argv)
 		cout<<"No image data \n";
 		return -1;
 	}
+    
+    auto t=start_time();
+
     cvtColor(image,image,COLOR_RGB2GRAY);
     //cout<<image.rows<<' '<<image.cols<<'\n';
     vector<int> csts = vector<int> { 7, 9, 11, 15, 17,(int)mean(image)/32,80};
@@ -44,12 +50,15 @@ int main(int argc, char** argv)
     {
         scan(image,s,csts,fxs,i);
     }
+
+    get_time(t,"main");
+    
     cout<<sn;
     for (int i=0;i<7;i++)
     {
         cout<<s[i];
     }
     cout<<'\n';
-    //cout<<s;
+    process_mem_usage();
     return 0;
 }
