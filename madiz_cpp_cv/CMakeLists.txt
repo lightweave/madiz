@@ -10,11 +10,15 @@ FIND_PACKAGE( OpenMP)
          set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
       endif()
      include_directories(SYSTEM ${OpenMP_INCLUDE_PATH})
+find_package( OpenCV REQUIRED )
+   if(!OPENCV_FOUND)
+         message(ERROR "OPENCV NOT FOUND")
+    endif()
 
 
-add_compile_options(-O2 -Ofast -fopenmp -lstdc++fs)
+add_compile_options(-O2 -Ofast -fopenmp )
 add_compile_options(-Wl,--as-needed -lfoo -Wl,--as-needed)
 
+include_directories( ${OpenCV_INCLUDE_DIRS} )
 add_executable( MADIZ MADIZ.cpp serv.cpp util.cpp obr.cpp)
-target_link_libraries(${PROJECT_NAME} stdc++fs)
-set_property(TARGET MADIZ PROPERTY CXX_STANDARD 17)
+target_link_libraries( MADIZ opencv_core opencv_imgproc opencv_imgcodecs)#${OpenCV_LIBS} 

@@ -1,17 +1,18 @@
 #include <iostream>
+#include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <vector>
 #include <omp.h>
-#include <tuple>
 #include "util.hpp"
 #include "serv.hpp"
+using cv::Mat;
+using cv::Size;
 using namespace std;
-#define uchar unsigned char
 
 
 bool is_overexposed(Mat &img)
 {
-    uchar treshold=100;
+    int treshold=100;
     float mean_intensity=mean(img);
     return mean_intensity>treshold;
 }
@@ -29,7 +30,7 @@ tuple<float, vector<uchar>,vector<uchar>> count_pixels(Mat &img, int &cst, bool 
 
     EnchanceBrightness(img,255);
 
-    //resize(img,img,Size(img.cols/99,img.rows/99));
+    resize(img,img,Size(img.cols/99,img.rows/99));
 
     EnchanceBrightness(img,80);
     vector<uchar> group_brightness=filter_pixels(img,mean(img)+cst);
@@ -103,7 +104,7 @@ vector<point> get_groupDFS(Mat &img,point start, float &factor,Mat &vizited)
 int count_groups(Mat &img,float &factor)
 {
 
-    Mat vizited = zero_Mat(img.rows,img.cols);
+    Mat vizited = Mat::zeros(img.rows,img.cols,CV_8U);
     vector<vector<point>> groups;
     point start;
     for (int i = 0; i < img.rows; i++) {

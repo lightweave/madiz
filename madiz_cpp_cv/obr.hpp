@@ -2,9 +2,9 @@
 #define obr_hpp__
 
 #include <vector>
-#include <tuple>
+#include <opencv2/opencv.hpp>
 #include "util.hpp"
-#define uchar unsigned char
+using cv::Mat;
 using namespace std;
 
 bool is_overexposed(Mat &img);
