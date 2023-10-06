@@ -88,21 +88,24 @@ vector<point> PCA_BFS(Mat &img,point &start, filt &filter,Mat &vizited,unsigned 
 
 tuple<int,int,vector<float>,vector<unsigned int>> count_cloudsPCA(Mimg& img)
 {
-    static const int c1=117,c2=20;
+    static const float c1=20,c2=-0.35;
     int particle=0,treck=0;
     vector<unsigned int> sum_groups_bright;
     vector<float> groups_bright;
     filt filter;
     filter.max=mean(img)+c1;
     filter.min=mean(img)+c2;
+    //cout<<filter.min<<' '<<filter.max<<'\n';
     
     Mat vizited = Mat::zeros(img.img.rows,img.img.cols,CV_8U);
     vector<vector<point>> groups;
     point start;
-    unsigned int sm_br;
+    unsigned int sm_br;//int cnt=0;
     for (int i = 0; i < img.img.rows; i++) {
         for (int j = 0; j < img.img.cols; j++) {
-            if (filter(pixel(img.img,i,j))>0 && pixel(vizited,i,j)==0){
+            //if (filter(pixel(img.img,i,j))==1) cnt++;
+            if (filter(pixel(img.img,i,j))==1 && pixel(vizited,i,j)==0){
+                //cnt++;
                 sm_br=0;
                 start=point(i,j);
                 spixel(vizited,start,filter(pixel(img.img,start)));
@@ -111,13 +114,14 @@ tuple<int,int,vector<float>,vector<unsigned int>> count_cloudsPCA(Mimg& img)
             }
         }
     }
+    //cout<<cnt<<' '<<groups.size()<<'\n';
     groups_bright.resize(groups.size());
     #pragma omp parallel for
     for (int i=0;i<groups.size();i++)
     {
         //cout<<PCA_analyse(groups[i])<<' '<<groups[i].size()<<'\n'; 
         groups_bright[i]=sum_groups_bright[i]/(groups[i].size()+.0);
-        if (groups[i].size()>3)
+        if (groups[i].size()>=3)
             if (PCA_analyse(groups[i])>0.3)
                 particle++;
             else
