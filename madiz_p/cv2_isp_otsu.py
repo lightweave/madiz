@@ -142,6 +142,7 @@ for i in range(height):
                                 queue.append((it+di,jt+dj))
                 if (all_brights1[it][jt]==1):
                     C.append([it,jt])
+            mas_all_C.append(C)
             if len(C) >= 3:
                 if PCA_analyse(C) > 0.3:
                     all_C.append("particle")
