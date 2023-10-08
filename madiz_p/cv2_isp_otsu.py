@@ -105,7 +105,7 @@ all_brights2[all_brights >= const_br1] = 1
 
 
 
-#all_brights-=np.min(np.array([all_brights,all_brights2]),axis=0)
+all_brights-=np.min(np.array([all_brights,all_brights2]),axis=0)
 print(np.sum(all_brights[all_brights==1]))
 
 #all_brights10 = np.subtract(all_brights, all_brights2)
